@@ -6,6 +6,8 @@ Create your digital business card by using only [AWS Free Tier](https://aws.amaz
 
 ## Easy installation
 
+### Create AWS Resources
+
 [Launch CloudFormation](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1) in the us-east-1 region and create a stack with the following S3 template URL:\
 `https://serverless-business-card.s3.amazonaws.com/template.yaml`
 
@@ -23,9 +25,17 @@ When your business card is ready, CloudFormation displays the CREATE_COMPLATE me
 
 Now head over to the [Lambda console](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/business-card?tab=code) and fill in your personal information in the Code source then click `Deploy`. Your business card URL is your Function URL. You can use this address to program an NFC sticker or link it to your personal domain.
 
-## Attach your photo
+### Attach your Photo
 
 You can add a photo to your business card. Upload your photo to the [S3 bucket](https://s3.console.aws.amazon.com/s3/home) you specified earlier. Be sure to name your photo `avatar.jpeg`.
+
+### Create a custom Domain
+
+For simplicity, you can forward your own subdomain to the Lambda Function URL with a CNAME record. This way, you don't have to remember the complex Lambda Function URL. You can also use a [free-for.life domain](https://free-for.life/#/?id=domains) for this purpose. e.g.: [misi.is-a.dev](https://misi.is-a.dev)
+
+### Program an NFC chip with your Function URL
+
+Purchase an NFC sticker for a few bucks and program your Lambda Function URL to it, then stick it on any of your current cards. Here is a great YouTube video on how to do this: [https://youtu.be/gbZDTGqoVks?si=bIlqtgAXWRVulKw_](https://youtu.be/gbZDTGqoVks?si=bIlqtgAXWRVulKw_)
 
 ## Donate
 
