@@ -2,6 +2,8 @@
 
 Create your digital business card by using only [AWS Free Tier](https://aws.amazon.com/free/) resources.
 
+![iPhone screenshot](https://github.com/suhajda3/serverless-business-card/blob/main/iPhone.jpeg?raw=true)
+
 ## Easy installation
 
 [Launch CloudFormation](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1) in the us-east-1 region and create a stack with the following S3 template URL:\
