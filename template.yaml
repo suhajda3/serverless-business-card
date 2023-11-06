@@ -1,0 +1,216 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  BucketName:
+    Description: The unique name of the S3 bucket in which to store your photo.
+    Type: String
+    Default: business-card-misi
+Metadata:
+  License: Apache-2.0
+  'AWS::CloudFormation::Designer':
+    4837266c-b484-4e92-b35c-bbc26031dc83:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -180
+        'y': 120
+      z: 0
+      embeds: []
+    3f6e4d1a-0883-4edd-a91d-107583c5c0c6:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -30
+        'y': 120
+      z: 0
+      embeds: []
+      dependson:
+        - 9f88d161-cc98-4c60-8689-6b17988ea0a0
+    9f88d161-cc98-4c60-8689-6b17988ea0a0:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 130
+        'y': 120
+      z: 0
+      embeds: []
+    e0e37101-40d1-4f61-aa2b-fdf20f5f7d15:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 80
+        'y': 230
+      z: 0
+      embeds: []
+    d0a02c65-7a9f-4a78-bd59-e069afcf28b3:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 190
+        'y': 230
+      z: 0
+      embeds: []
+    6de4c091-29ab-448a-b242-423e751ad4e2:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -30
+        'y': 230
+      z: 0
+      embeds: []
+      dependson:
+        - 3f6e4d1a-0883-4edd-a91d-107583c5c0c6
+    c2001582-2de4-40b6-9f17-e98536689c37:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -130
+        'y': 230
+      z: 0
+      embeds: []
+      dependson:
+        - 6de4c091-29ab-448a-b242-423e751ad4e2
+    d9cd6fe3-f92f-4c93-bcd2-d7fdb961c6cf:
+      size:
+        width: 140
+        height: 140
+      position:
+        x: -70
+        'y': 80
+      z: 0
+      embeds: []
+Description: >-
+  AWS CloudFormation template for a serverless business card. Source:
+  https://github.com/suhajda3/serverless-business-card
+Resources:
+  Permission:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Description: Serverless Business Card execution role
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      RoleName: BusinessCardRole
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 9f88d161-cc98-4c60-8689-6b17988ea0a0
+  Photo:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 4837266c-b484-4e92-b35c-bbc26031dc83
+  GetFunctionUrlConfig:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: BusinessCardGetFunctionUrlConfig
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'lambda:GetFunctionUrlConfig'
+            Resource: !Sub >-
+              arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:business-card
+      Roles:
+        - !Ref Permission
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e0e37101-40d1-4f61-aa2b-fdf20f5f7d15
+  GetObject:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: BusinessCardGetObject
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${BucketName}/*'
+      Roles:
+        - !Ref Permission
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d0a02c65-7a9f-4a78-bd59-e069afcf28b3
+  Lambda:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        S3Bucket: serverless-business-card
+        S3Key: serverless-business-card.zip
+      Description: Serverless Business Card
+      Environment:
+        Variables:
+          bucketName: !Ref BucketName
+      FunctionName: business-card
+      Handler: index.handler
+      Role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/BusinessCardRole'
+      Runtime: nodejs18.x
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3f6e4d1a-0883-4edd-a91d-107583c5c0c6
+    DependsOn:
+      - Permission
+  FunctionUrl:
+    Type: 'AWS::Lambda::Url'
+    Properties:
+      AuthType: NONE
+      TargetFunctionArn: business-card
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6de4c091-29ab-448a-b242-423e751ad4e2
+    DependsOn:
+      - Lambda
+  FunctionUrlPolicy:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunctionUrl'
+      FunctionName: business-card
+      Principal: '*'
+      FunctionUrlAuthType: NONE
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c2001582-2de4-40b6-9f17-e98536689c37
+    DependsOn:
+      - FunctionUrl
+  Logs:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: /aws/lambda/business-card
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d9cd6fe3-f92f-4c93-bcd2-d7fdb961c6cf

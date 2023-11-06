@@ -1,0 +1,390 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  BucketName:
+    Description: The unique name of the S3 bucket in which to store your photo.
+    Type: String
+    Default: business-card-misi
+Metadata:
+  License: Apache-2.0
+  'AWS::CloudFormation::Designer':
+    4837266c-b484-4e92-b35c-bbc26031dc83:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -180
+        'y': 120
+      z: 0
+      embeds: []
+    3f6e4d1a-0883-4edd-a91d-107583c5c0c6:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -30
+        'y': 120
+      z: 0
+      embeds: []
+      dependson:
+        - 9f88d161-cc98-4c60-8689-6b17988ea0a0
+    9f88d161-cc98-4c60-8689-6b17988ea0a0:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 130
+        'y': 120
+      z: 0
+      embeds: []
+    e0e37101-40d1-4f61-aa2b-fdf20f5f7d15:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 80
+        'y': 230
+      z: 0
+      embeds: []
+    d0a02c65-7a9f-4a78-bd59-e069afcf28b3:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 190
+        'y': 230
+      z: 0
+      embeds: []
+    6de4c091-29ab-448a-b242-423e751ad4e2:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -30
+        'y': 230
+      z: 0
+      embeds: []
+      dependson:
+        - 3f6e4d1a-0883-4edd-a91d-107583c5c0c6
+    c2001582-2de4-40b6-9f17-e98536689c37:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -130
+        'y': 230
+      z: 0
+      embeds: []
+      dependson:
+        - 6de4c091-29ab-448a-b242-423e751ad4e2
+    d9cd6fe3-f92f-4c93-bcd2-d7fdb961c6cf:
+      size:
+        width: 140
+        height: 140
+      position:
+        x: -70
+        'y': 80
+      z: 0
+      embeds: []
+Description: >-
+  AWS CloudFormation template for a serverless business card. Source:
+  https://github.com/suhajda3/serverless-business-card
+Resources:
+  Permission:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Description: Serverless Business Card execution role
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      RoleName: BusinessCardRole
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 9f88d161-cc98-4c60-8689-6b17988ea0a0
+  Photo:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 4837266c-b484-4e92-b35c-bbc26031dc83
+  GetFunctionUrlConfig:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: BusinessCardGetFunctionUrlConfig
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'lambda:GetFunctionUrlConfig'
+            Resource: !Sub >-
+              arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:business-card
+      Roles:
+        - !Ref Permission
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e0e37101-40d1-4f61-aa2b-fdf20f5f7d15
+  GetObject:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: BusinessCardGetObject
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${BucketName}/*'
+      Roles:
+        - !Ref Permission
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d0a02c65-7a9f-4a78-bd59-e069afcf28b3
+  Lambda:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        ZipFile: >
+          import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+          import { LambdaClient, GetFunctionUrlConfigCommand } from
+          "@aws-sdk/client-lambda";
+
+          export const handler = async (event) => {
+
+            //////////////////////////////////////////////
+            // Fill out your personal information below //
+            //////////////////////////////////////////////
+
+            // Required fields
+            var familyName = '';
+            var givenName = '';
+
+            // Optional name fields
+            var middleNames = '';
+            var honorificPrefixes = '';
+            var honorificSuffixes = '';
+            var nickname = '';
+
+            // Organization
+            var organization = '';
+
+            // E-mails
+            var eMails = [
+              {
+                'type': '',  // Options: HOME, WORK, OTHER
+                'email': '',
+                'default': true
+              }
+            ];
+
+            // Phone numbers
+            var phoneNumbers = [
+              {
+                'type1': '',  // Options: IPHONE, VOICE, PAGER, FAX, MSG, BBS, MODEM, CAR, ISDN, VIDEO, PCS
+                'type2': '',  // Options: CELL, WORK, HOME, OTHER
+                'number': '',
+                'default': true
+              }
+            ];
+
+            // Addresses
+            var addresses = [
+              {
+                'type': '',  // Options: HOME, WORK
+                'extAddress': '',  // Extended address (e.g. apartment or suite number)
+                'street': '',
+                'locality': '',
+                'region': '',
+                'postalCode': '',
+                'country': '',
+                'default': true
+              }
+            ];
+
+            // URL
+            var url = '';  // e.g. https://roadtoaws.com
+
+            // Birthday
+            var birthday = '';  // e.g. 1982-06-07
+
+            // IMPP
+            var IMPPs = [
+              {
+                'service': '',  // Options: Facebook, Gadu-Gadu, Google Talk, ICQ, Jabber, MSN, QQ, Skype, Yahoo
+                'type': '',  // Options: HOME, WORK
+                'handle': '',
+                'default': true
+              }
+            ];
+
+            // Social
+            var socials = [
+              {
+                'type': '',  // Options: Twitter, Facebook, Flickr, LinkedIn, Myspace, Sina Weibo, Tencent Weibo, Yelp, gamecenter
+                'url': ''
+              }
+            ];
+
+            // Title
+            var title = '';  // e.g. Cloud Architect
+
+            // Timestamp for the last time the vCard was updated
+            var rev = '';  // e.g. 20121201T134211Z
+
+            // Public encryption key
+            var key = '';  // e.g. http://example.com/key.pgp
+
+            // UID
+            var uid = '';  // e.g. da418720-3754-4631-a169-db89a02b831b
+
+            /////////////////////////////////
+            // END OF PERSONAL INFORMATION //
+            /////////////////////////////////
+
+            var photo = '';
+            const s3Bucket = process.env.bucketName;
+
+            const s3Client = new S3Client();
+            const s3Command = new GetObjectCommand({ Bucket: s3Bucket, Key: 'avatar.jpeg' });
+            try {
+              const avatarJpeg = await s3Client.send(s3Command);
+              photo = await avatarJpeg.Body.transformToString('base64');
+            }
+            catch (e) {
+              console.log('No avatar.jpeg found in S3 bucket.');
+            }
+
+            const lambdaClient = new LambdaClient();
+            const lambdaCommand = new GetFunctionUrlConfigCommand({ FunctionName: 'business-card' });
+            const functionUrl = await lambdaClient.send(lambdaCommand);
+
+            // Build vCard
+            var vCard = 'BEGIN:VCARD\r\nVERSION:3.0\r\nPRODID:-//serverless-business-card//v1.0.0//EN\r\n';
+            vCard += 'N:' + familyName + ';' + givenName + ';' + middleNames + ';' + honorificPrefixes + ';' + honorificSuffixes + '\r\n';
+            vCard += 'FN:' + givenName + ' ' + familyName + '\r\n';
+            vCard += 'SOURCE:' + functionUrl.FunctionUrl + '\r\n';
+            if (nickname) vCard += 'NICKNAME:' + nickname + '\r\n';
+            if (organization) vCard += 'ORG:' + organization + '\r\n';
+            eMails.forEach((eMail) => {
+              if (eMail.type) {
+                vCard += 'EMAIL;type=INTERNET;type=' + eMail.type;
+                if (eMail.default) vCard += ';type=pref';
+                vCard += ':' + eMail.email + '\r\n';
+              }
+            });
+            phoneNumbers.forEach((phoneNumber) => {
+              if (phoneNumber.type1) {
+                vCard += 'TEL;type=' + phoneNumber.type1 + ';type=' + phoneNumber.type2;
+                if (phoneNumber.default) vCard += ';type=pref';
+                vCard += ':' + phoneNumber.number + '\r\n';
+              }
+            });
+            addresses.forEach((address) => {
+              if (address.type) {
+                vCard += 'ADR;type=' + address.type;
+                if (address.default) vCard += ';type=pref';
+                vCard += ':;' + address.extAddress + ';' + address.street + ';' + address.locality + ';' + address.region + ';' + address.postalCode + ';' + address.country + '\r\n';
+              }
+            });
+            IMPPs.forEach((impp) => {
+              if (impp.service) {
+                vCard += 'IMPP';
+                if (impp.default) vCard += ';type=pref';
+                vCard += ';X-SERVICE-TYPE=' + impp.service + ';type=' + impp.type;
+                if (impp.default) vCard += ';type=pref';
+                vCard += impp.service + ':' + impp.handle + '\r\n';
+              }
+            });
+            socials.forEach((social) => {
+              if (social.type) {
+                vCard += 'X-SOCIALPROFILE;';
+                vCard += 'type=' + social.type + ':' + social.url + '\r\n';
+              }
+            });
+            if (birthday) vCard += 'BDAY:' + birthday + '\r\n';
+            if (photo) vCard += 'PHOTO;ENCODING=b;TYPE=JPEG:' + photo + '\r\n';
+            if (url) vCard += 'URL:' + url + '\r\n';
+            if (title) vCard += 'TITLE:' + title + '\r\n';
+            if (rev) vCard += 'REV:' + rev + '\r\n';
+            if (key) vCard += 'KEY;TYPE=PGP:' + key + '\r\n';
+            if (uid) vCard += 'UID:' + uid + '\r\n';
+            vCard += 'END:VCARD';
+
+            const response = {
+              statusCode: 200,
+              headers: {
+                'Content-Type': 'text/vcard',
+                'Content-Disposition': 'inline; filename="' + givenName + ' ' + familyName + '.vcf"'
+              },
+              body: vCard,
+            };
+            return response;
+          };
+      Description: Serverless Business Card
+      Environment:
+        Variables:
+          bucketName: !Ref BucketName
+      FunctionName: business-card
+      Handler: index.handler
+      Role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/BusinessCardRole'
+      Runtime: nodejs18.x
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3f6e4d1a-0883-4edd-a91d-107583c5c0c6
+    DependsOn:
+      - Permission
+  FunctionUrl:
+    Type: 'AWS::Lambda::Url'
+    Properties:
+      AuthType: NONE
+      TargetFunctionArn: business-card
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6de4c091-29ab-448a-b242-423e751ad4e2
+    DependsOn:
+      - Lambda
+  FunctionUrlPolicy:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunctionUrl'
+      FunctionName: business-card
+      Principal: '*'
+      FunctionUrlAuthType: NONE
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c2001582-2de4-40b6-9f17-e98536689c37
+    DependsOn:
+      - FunctionUrl
+  Logs:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: /aws/lambda/business-card
+      Tags:
+        - Key: Project
+          Value: serverless-business-card
+        - Key: Source
+          Value: 'https://github.com/suhajda3/serverless-business-card'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d9cd6fe3-f92f-4c93-bcd2-d7fdb961c6cf
