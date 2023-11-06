@@ -4,7 +4,7 @@ Create your digital business card by using only [AWS Free Tier](https://aws.amaz
 
 ![iPhone screenshot](https://github.com/suhajda3/serverless-business-card/blob/main/assets/iPhone.jpeg?raw=true)
 
-## Easy installation
+## Easy Installation
 
 ### Create AWS Resources
 
@@ -37,7 +37,7 @@ For simplicity, you can forward your own subdomain to the Lambda Function URL wi
 
 Purchase an NFC sticker for a few bucks and program your Lambda Function URL to it, then stick it on any of your current cards. Here is a great YouTube video on how to do this: [https://youtu.be/gbZDTGqoVks?si=bIlqtgAXWRVulKw_](https://youtu.be/gbZDTGqoVks?si=bIlqtgAXWRVulKw_)
 
-## Advanced installation
+## Advanced Installation
 
 If you want to deploy the CloudFormaton stack other than the us-east-1 region, you can use the template-with-code.yaml instead with the following S3 template URL:\
 `https://serverless-business-card.s3.amazonaws.com/template-with-code.yaml`
@@ -50,9 +50,9 @@ The issue with this method is that CloudFormation automatically creates an index
 
 ## Files
 
-- template.yaml: CloudFormation template that downloads the source code (serverless-business-card.zip) from an S3 bucket located in us-east-1
-- template-with-code.yaml: CloudFormation template that contains the source code. (There is currently an [issue](https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/1832) with CloudFormation and Node.js 18.x)
-- serverless-business-card.zip: Lambda source code
+- **template.yaml**: CloudFormation template that downloads the source code (serverless-business-card.zip) from an S3 bucket located in us-east-1
+- **template-with-code.yaml**: CloudFormation template that contains the source code. (There is currently an [issue](https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/1832) with CloudFormation and Node.js 18.x)
+- **serverless-business-card.zip**: Lambda source code
 
 ## Donate
 
