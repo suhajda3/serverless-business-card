@@ -1,6 +1,7 @@
 # Serverless business card
 
-Create your digital business card by using only [AWS Free Tier](https://aws.amazon.com/free/) resources.
+Create your digital business card by using only [AWS Free Tier](https://aws.amazon.com/free/) resources.\
+Example: [misi.is-a.dev](http://misi.is-a.dev)
 
 ![iPhone screenshot](https://github.com/suhajda3/serverless-business-card/blob/main/assets/iPhone.jpeg?raw=true)
 
@@ -30,13 +31,9 @@ Your business card URL is your Function URL. You can use this address to program
 
 You can add a photo to your business card. Upload your photo to the [S3 bucket](https://s3.console.aws.amazon.com/s3/home) you specified earlier. Be sure to name your photo `avatar.jpeg`.
 
-### Create a custom Domain
-
-For a more friendly URL, you can redirect your own subdomain to the Lambda Function URL with a CNAME record. You can also use a [free-for.life domain](https://free-for.life/#/?id=domains) for this purpose. e.g.: [misi.is-a.dev](https://misi.is-a.dev)
-
 ### Program an NFC chip with your Function URL
 
-Purchase an NFC sticker for a few bucks and program your Lambda Function URL to it, then stick it on any of your current cards. You can program the NFC sticker with [NFC Tools](https://www.wakdev.com/en/apps.html).
+Purchase an [NFC sticker](https://www.amazon.com/s?k=NFC+stickers) for a few bucks and program your Lambda Function URL to it, then stick it on any of your current cards. You can program the NFC sticker with [NFC Tools](https://www.wakdev.com/en/apps.html).
 
 ## Advanced Installation
 
@@ -48,6 +45,10 @@ This does not download the zipped Lambda code from S3, it contains the code itse
 The issue with this method is that CloudFormation automatically creates an index.js file and doesn't look for the specified Node.js version. Since Node.js 18.x index.js is no longer default. You will need to rename index.js to index.mjs. Everything else is the same.
 
 ![CloudFormation template](https://github.com/suhajda3/serverless-business-card/blob/main/assets/CloudFormation-template.png?raw=true)
+
+### Use a custom Domain
+
+For a more friendly URL, you can use your own subdomain instead of the Lambda Function URL. Don't forget that Lambda Function URL's are HTTPS only. You will need a redirect or if you prefer to use DNS (CNAME) you will need a valid HTTPS certificate for that domain. You can use one of the [free-for.life domains](https://free-for.life/#/?id=domains) for this purpose.
 
 ## Files
 
