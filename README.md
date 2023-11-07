@@ -1,7 +1,7 @@
 # Serverless business card
 
 Create your digital business card by using only [AWS Free Tier](https://aws.amazon.com/free/) resources.\
-Example: [misi.is-a.dev](http://misi.is-a.dev)
+Example: [misi.is-a.dev](https://misi.is-a.dev)
 
 ![iPhone screenshot](https://github.com/suhajda3/serverless-business-card/blob/main/assets/iPhone.jpeg?raw=true)
 
