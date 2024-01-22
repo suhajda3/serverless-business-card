@@ -48,7 +48,7 @@ The issue with this method is that CloudFormation automatically creates an index
 
 ### Use a custom Domain
 
-For a more friendly URL, you can use your own subdomain instead of the Lambda Function URL. Don't forget that Lambda Function URL's are HTTPS only. You will need a redirect or if you prefer to use DNS (CNAME) you will need a valid HTTPS certificate for that domain. You can use one of the [free-for.life domains](https://free-for.life/#/?id=domains) for this purpose.
+For a more friendly URL, you can use your own subdomain instead of the Lambda Function URL. Don't forget that Lambda Function URL's are HTTPS only. You will need a redirect or if you prefer to use DNS (CNAME) you will need a valid HTTPS certificate for that domain. You can use one of the [Free For Life domains](https://free.wdh.gg/#/?id=domains) for this purpose.
 
 ## Files
 
